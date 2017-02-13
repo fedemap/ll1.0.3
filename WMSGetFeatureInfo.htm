@@ -84,20 +84,20 @@ function init() {
                             attributes = feature.properties;
                         html += '<b>Code:</b> ' + attributes.STATE_ABBR + '<br/><b>State:</b> ' + attributes.STATE_NAME;
                     }
-                    popup = L.popup(null, me).setLatLng(loc).setContent(html).openOn(map);
+                    L.popup(null, me).setLatLng(loc).setContent(html).openOn(map);
                     me.on('popupclose', function() {
                         map.removeLayer(vector);
                         me.off('popupclose', function() {});
                     });
                 } else {
                     html = 'No features found...';
-                    popup = L.popup().setLatLng(loc).setContent(html).openOn(map);
+                    L.popup().setLatLng(loc).setContent(html).openOn(map);
                 }
             },
             error: function(xhr, status, err) {
                 map.removeLayer(vector);
-                html = 'Unable to complete the request...:' + err,
-                    L.popup().setLatLng(loc).setContent(html).openOn(map);
+                html = 'Unable to complete the request...:' + err;
+                L.popup().setLatLng(loc).setContent(html).openOn(map);
             }
         });
     }
