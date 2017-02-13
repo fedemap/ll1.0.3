@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WMSGetFeatureInfo</title>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+<script type="text/javascript" src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+<style type="text/css">
+html,body,#map{	
+	height:100%;width:100%;
+	margin:0;padding:0;
+}
+</style>
+<script type="text/javascript">
+function init() {
+    var wms = L.tileLayer.wms('http://demo.opengeo.org/geoserver/wms', {
+            layers: 'topp:states'
+        }),
+        vector = L.geoJSON();
+
+    map = L.map('map', {
+        crs: L.CRS.EPSG4326,
+        center: [38, -98],
+        zoom: 4,
+        layers: [
+            wms, vector
+        ]
+    });
+    map.on('click', WMSGetFeatureInfo, wms);
+
+    function WMSGetFeatureInfo(e) {
+        var me = this,
+            xy = e.containerPoint,
+            loc = e.latlng,
+            map = me._map,
+            params = me.wmsParams,
+            size = map.getSize(),
+            url = me._url,
+            obj = {
+                request: 'GetFeatureInfo',
+                service: 'WMS',
+                layers: params.layers,
+                query_layers: params.layers,
+                version: params.version,
+                styles: params.styles,
+                bbox: map.getBounds().toBBoxString(),
+                width: size.x,
+                height: size.y,
+                info_format: 'application/json',
+                feature_count: 1
+            };
+        if (parseFloat(obj.version) >= 1.3) {
+            obj.crs = params.crs;
+            obj.i = xy.x;
+            obj.j = xy.y;
+        } else {
+            obj.srs = params.srs;
+            obj.x = xy.x;
+            obj.y = xy.y;
+        }
+        if (params.CQL_FILTER) {
+            obj.cql_filter = params.CQL_FILTER;
+        }
+        if (params.FILTER) {
+            obj.filter = params.FILTER;
+        }
+        if (params.FEATUREID) {
+            obj.featureid = params.FEATUREID;
+        }
+        $.ajax({
+            url: url + L.Util.getParamString(obj, url),
+            //dataType:'jsonp',
+            //jsonpCallback:'parseResponse',
+            success: function(data, status, xhr) {
+                var features = data.features,
+                    html = '',
+                    popup;
+                map.removeLayer(vector);
+                if (features.length) {
+                    vector = L.geoJSON(data).addTo(map);
+                    for (var i in features) {
+                        var feature = features[i],
+                            attributes = feature.properties;
+                        html += '<b>Code:</b> ' + attributes.STATE_ABBR + '<br/><b>State:</b> ' + attributes.STATE_NAME;
+                    }
+                    popup = L.popup(null, me).setLatLng(loc).setContent(html).openOn(map);
+                    me.on('popupclose', function() {
+                        map.removeLayer(vector);
+                        me.off('popupclose', function() {});
+                    });
+                } else {
+                    html = 'No features found...';
+                    popup = L.popup().setLatLng(loc).setContent(html).openOn(map);
+                }
+            },
+            error: function(xhr, status, err) {
+                map.removeLayer(vector);
+                html = 'Unable to complete the request...:' + err,
+                    L.popup().setLatLng(loc).setContent(html).openOn(map);
+            }
+        });
+    }
+}
+</script>
+</head>
+<body onload="init();">
+<div>
+<br/>WMSGetFeatureInfo with geometry using Leaflet-1.0.3.
+<br/><b>Input:</b> Click anywhere on the map.
+<br/><b>Output:</b> FeatureInfo in a popup & highlights its geometry on the map.
+<br/><a target="_new" href="https://github.com/mmsmdali/ll1.0.3/blob/master/WMSGetFeatureInfo.htm">View/ Download Source @ GitHub</a>
+| <a target="_new" href="http://jsfiddle.net/mmsmdali/ybzkg1tL">Edit/ Run @ JSFiddle</a>
+| <a target="_new" href="https://github.com/mmsmdali">My GitHub Repos</a>
+| <a target="_new" href="http://jsfiddle.net/user/mmsmdali/fiddles">My JSFiddles</a>
+</div>
+<div id="map"></div>
+</body>
+</html>
