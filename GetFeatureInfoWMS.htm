@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>WMSGetFeatureInfo</title>
+<title>GetFeatureInfoWMS</title>
 <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
 <script type="text/javascript" src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -27,9 +27,9 @@ function init() {
             wms, vector
         ]
     });
-    map.on('click', WMSGetFeatureInfo, wms);
+    map.on('click', GetFeatureInfo, wms);
 
-    function WMSGetFeatureInfo(e) {
+    function GetFeatureInfo(e) {
         var me = this,
             xy = e.containerPoint,
             loc = e.latlng,
@@ -106,10 +106,10 @@ function init() {
 </head>
 <body onload="init();">
 <div>
-<br/><b>WMSGetFeatureInfo with geometry using Leaflet-1.0.3.</b>
+<br/><b>GetFeatureInfo+geometry from WMS using Leaflet-1.0.3.</b>
 <br/><b>Input:</b> Click anywhere on the map.
 <br/><b>Output:</b> FeatureInfo in a popup & highlights its geometry on the map.
-<br/><a target="_new" href="https://github.com/mmsmdali/ll1.0.3/blob/master/WMSGetFeatureInfo.htm">View/ Download Source @ GitHub</a>
+<br/><a target="_new" href="https://github.com/mmsmdali/ll1.0.3/blob/master/GetFeatureInfoWMS.htm">View/ Download Source @ GitHub</a>
 | <a target="_new" href="http://jsfiddle.net/mmsmdali/ybzkg1tL">Edit/ Run @ JSFiddle</a>
 | <a target="_new" href="https://github.com/mmsmdali?tab=repositories">My GitHub Repos</a>
 | <a target="_new" href="http://jsfiddle.net/user/mmsmdali">My JSFiddles</a>
