@@ -15,7 +15,7 @@ html,body,#map{
 <script type="text/javascript">
 function init() {
     var wms = L.tileLayer.wms('http://demo.geo-solutions.it/geoserver/wms', {
-            layers: 'ws_my:states'
+            layers: 'topp:states'
         }),
         vector = L.geoJSON();
 
@@ -82,7 +82,7 @@ function init() {
                     for (var i in features) {
                         var feature = features[i],
                             attributes = feature.properties;
-                        html += '<b>Code:</b> ' + attributes.STATE_ABBR + '<br/><b>State:</b> ' + attributes.STATE_NAME + '<br/>';
+                        html += '<br/><b>Code:</b> ' + attributes.STATE_ABBR + '<br/><b>State:</b> ' + attributes.STATE_NAME + '<br/>';
                     }
                     L.popup(null, me).setLatLng(loc).setContent(html).openOn(map);
                     me.on('popupclose', function() {
